@@ -1,0 +1,28 @@
+.category-nav {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.category-nav .category-toggle {
+  color: #00336e;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.category-nav .category-toggle:hover,
+.category-nav .category-toggle.show {
+  color: #00336e;
+  background-color: #f3f6fa;
+}
+
+.category-nav .dropdown-menu {
+  min-width: 180px;
+  border-radius: 6px;
+}
+
+.category-nav .dropdown-item {
+  color: #00336e;
+  font-size: 15px;
+  padding: 8px 18px;
+}
