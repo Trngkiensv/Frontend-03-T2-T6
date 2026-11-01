@@ -1,12 +1,17 @@
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+
 export default function Header() {
+  const { totalQuantity } = useCart();
+
   return (
     <header className="bg-white border-bottom">
       <div className="container py-3">
         <div className="row align-items-center g-3">
           <div className="col-12 col-lg-3 text-center text-lg-start">
-            <span className="fs-4 fw-bold text-dark">
+            <Link to="/" className="fs-4 fw-bold text-dark text-decoration-none">
               BLACKGLASSES
-            </span>
+            </Link>
           </div>
 
           <div className="col-12 col-md-7 col-lg-5">
@@ -33,15 +38,16 @@ export default function Header() {
                 Tài khoản
               </button>
 
-              <button
-                type="button"
+              <Link
+                id="header-cart"
+                to="/cart"
                 className="btn btn-dark text-nowrap"
               >
                 Giỏ hàng
                 <span className="badge bg-light text-dark ms-2">
-                  0
+                  {totalQuantity}
                 </span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>
