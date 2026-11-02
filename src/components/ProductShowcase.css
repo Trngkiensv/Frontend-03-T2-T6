@@ -1,0 +1,21 @@
+.product-track {
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+
+.product-slide {
+  flex: 0 0 80%;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 576px) {
+  .product-slide {
+    flex-basis: calc((100% - 1rem) / 2);
+  }
+}
+
+@media (min-width: 992px) {
+  .product-slide {
+    flex-basis: calc((100% - 3rem) / 4);
+  }
+}
