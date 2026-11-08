@@ -7,6 +7,12 @@ import "./Cart.css";
 export default function Cart() {
   const { items, totalQuantity, clearCart } = useCart();
 
+  const handleClearCart = () => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa toàn bộ sản phẩm khỏi giỏ hàng?")) {
+      clearCart();
+    }
+  };
+
   if (items.length === 0) {
     return (
       <main className="cart-page container">
@@ -32,7 +38,7 @@ export default function Cart() {
         <h1>
           Giỏ hàng <span>({totalQuantity} sản phẩm)</span>
         </h1>
-        <button id="clear-cart" type="button" onClick={clearCart}>
+        <button id="clear-cart" type="button" onClick={handleClearCart}>
           Xóa tất cả
         </button>
       </header>
