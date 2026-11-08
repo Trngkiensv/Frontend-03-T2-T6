@@ -4,6 +4,7 @@ import CategoryNav from "./components/CategoryNav";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import { useCart } from "./context/CartContext";
 
 export default function App() {
@@ -42,6 +43,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
 
       <Footer />

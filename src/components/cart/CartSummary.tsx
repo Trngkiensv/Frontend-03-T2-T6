@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { formatPrice } from "../../utils/format";
 
 const FREE_SHIPPING_THRESHOLD = 1000000;
 
 export default function CartSummary() {
+  const navigate = useNavigate();
   const {
     subtotal,
     totalQuantity,
@@ -127,7 +129,12 @@ export default function CartSummary() {
         Gợi ý: <code>DISCOUNT10</code> (-10%), <code>FREESHIP</code>, <code>BLACKGLASSES</code> (-50k)
       </p>
 
-      <button id="checkout-button" type="button" className="cart-summary__checkout">
+      <button
+        id="checkout-button"
+        type="button"
+        className="cart-summary__checkout"
+        onClick={() => navigate("/checkout")}
+      >
         Tiến hành thanh toán
       </button>
     </aside>
