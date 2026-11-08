@@ -41,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <button
                     id={`add-to-cart-${product.id}`}
                     type="button"
-                    className="btn btn-dark mt-auto"
+                    className="btn btn-dark btn-sm mt-auto"
                     onClick={() => addToCart(product)}
                 >
                     Thêm vào giỏ
