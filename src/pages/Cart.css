@@ -205,6 +205,58 @@
 }
 .cart-summary__coupon button:hover { background: rgba(255, 255, 255, 0.1); }
 
+.cart-summary__discount-row dt {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #a8df8e !important;
+}
+.cart-summary__discount-row dd {
+  color: #a8df8e;
+  font-weight: 600;
+}
+.cart-summary__coupon-remove {
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.65rem;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+.cart-summary__coupon-remove:hover {
+  background: #d63c3c;
+}
+.cart-summary__msg {
+  font-size: 0.75rem;
+  margin: -0.4rem 0 0.6rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
+}
+.cart-summary__msg--success {
+  background: rgba(168, 223, 142, 0.15);
+  color: #a8df8e;
+}
+.cart-summary__msg--error {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff8e8e;
+}
+.cart-summary__hint {
+  font-size: 0.72rem;
+  color: #a29cae;
+  margin-bottom: 0.85rem;
+  line-height: 1.4;
+}
+.cart-summary__hint code {
+  color: #e6c878;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.1rem 0.25rem;
+  border-radius: 4px;
+}
+
 .cart-summary__checkout {
   width: 100%;
   padding: 0.75rem;

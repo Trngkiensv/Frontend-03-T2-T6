@@ -1,16 +1,46 @@
+import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { formatPrice } from "../../utils/format";
 
 const FREE_SHIPPING_THRESHOLD = 1000000;
-const SHIPPING_FEE = 30000;
 
 export default function CartSummary() {
-  const { subtotal, totalQuantity } = useCart();
+  const {
+    subtotal,
+    totalQuantity,
+    shippingFee,
+    discountAmount,
+    finalTotal,
+    appliedCoupon,
+    applyCoupon,
+    removeCoupon,
+  } = useCart();
 
-  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-  const total = subtotal + shipping;
-  const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
+  const [couponInput, setCouponInput] = useState("");
+  const [couponMessage, setCouponMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
+
+  const handleApplyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!couponInput.trim()) return;
+    const res = applyCoupon(couponInput);
+    if (res.success) {
+      setCouponMessage({ type: "success", text: res.message });
+      setCouponInput("");
+    } else {
+      setCouponMessage({ type: "error", text: res.message });
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    setCouponMessage(null);
+  };
 
   return (
     <aside className="cart-summary">
@@ -37,25 +67,65 @@ export default function CartSummary() {
         </div>
         <div>
           <dt>Phí vận chuyển</dt>
-          <dd>{shipping === 0 ? "Miễn phí" : formatPrice(shipping)}</dd>
+          <dd>{shippingFee === 0 ? "Miễn phí" : formatPrice(shippingFee)}</dd>
         </div>
+
+        {appliedCoupon && (
+          <div className="cart-summary__discount-row">
+            <dt>
+              Giảm giá ({appliedCoupon.code})
+              <button
+                type="button"
+                className="cart-summary__coupon-remove"
+                onClick={handleRemoveCoupon}
+                title="Hủy mã giảm giá"
+              >
+                ✕
+              </button>
+            </dt>
+            <dd>
+              {appliedCoupon.code === "FREESHIP"
+                ? "Freeship"
+                : `-${formatPrice(discountAmount)}`}
+            </dd>
+          </div>
+        )}
+
         <div className="cart-summary__total">
           <dt>Tổng cộng</dt>
-          <dd>{formatPrice(total)}</dd>
+          <dd>{formatPrice(finalTotal)}</dd>
         </div>
       </dl>
 
-      <div className="cart-summary__coupon">
+      <form className="cart-summary__coupon" onSubmit={handleApplyCoupon}>
         <input
           id="coupon-input"
           type="text"
-          placeholder="Mã giảm giá"
+          placeholder="Mã giảm giá (VD: DISCOUNT10)"
           aria-label="Mã giảm giá"
+          value={couponInput}
+          onChange={(e) => setCouponInput(e.target.value)}
         />
-        <button id="coupon-apply" type="button">
+        <button id="coupon-apply" type="submit">
           Áp dụng
         </button>
-      </div>
+      </form>
+
+      {couponMessage && (
+        <p
+          className={`cart-summary__msg ${
+            couponMessage.type === "success"
+              ? "cart-summary__msg--success"
+              : "cart-summary__msg--error"
+          }`}
+        >
+          {couponMessage.text}
+        </p>
+      )}
+
+      <p className="cart-summary__hint">
+        Gợi ý: <code>DISCOUNT10</code> (-10%), <code>FREESHIP</code>, <code>BLACKGLASSES</code> (-50k)
+      </p>
 
       <button id="checkout-button" type="button" className="cart-summary__checkout">
         Tiến hành thanh toán
