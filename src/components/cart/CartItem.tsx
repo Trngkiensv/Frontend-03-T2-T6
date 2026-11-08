@@ -9,6 +9,12 @@ interface CartItemProps {
 export default function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeFromCart } = useCart();
 
+  const handleRemove = () => {
+    if (window.confirm(`Bạn có chắc muốn xóa "${item.name}" khỏi giỏ hàng?`)) {
+      removeFromCart(item.id);
+    }
+  };
+
   return (
     <article className="cart-item">
       <div className="cart-item__thumb">
@@ -30,11 +36,25 @@ export default function CartItem({ item }: CartItemProps) {
         >
           −
         </button>
-        <span>{item.quantity}</span>
+        <input
+          type="number"
+          min={1}
+          max={99}
+          className="cart-item__qty-input"
+          value={item.quantity}
+          onChange={(e) => {
+            const val = parseInt(e.target.value, 10);
+            if (!isNaN(val) && val >= 1) {
+              updateQuantity(item.id, Math.min(99, val));
+            }
+          }}
+          aria-label={`Số lượng của ${item.name}`}
+        />
         <button
           id={`qty-increase-${item.id}`}
           type="button"
           onClick={() => updateQuantity(item.id, item.quantity + 1)}
+          disabled={item.quantity >= 99}
           aria-label="Tăng số lượng"
         >
           +
@@ -49,8 +69,9 @@ export default function CartItem({ item }: CartItemProps) {
         id={`remove-${item.id}`}
         type="button"
         className="cart-item__remove"
-        onClick={() => removeFromCart(item.id)}
+        onClick={handleRemove}
         aria-label={`Xóa ${item.name} khỏi giỏ hàng`}
+        title="Xóa sản phẩm"
       >
         ✕
       </button>

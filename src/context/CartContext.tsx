@@ -9,10 +9,13 @@ interface CartContextValue {
   items: CartItem[];
   totalQuantity: number;
   subtotal: number;
+  toastMessage: string | null;
   addToCart: (product: Product, quantity?: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
+  showToast: (msg: string) => void;
+  hideToast: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -28,10 +31,27 @@ function loadCart(): CartItem[] {
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(loadCart);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+  };
+
+  const hideToast = () => {
+    setToastMessage(null);
+  };
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = setTimeout(() => {
+      setToastMessage(null);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
 
   const addToCart = (product: Product, quantity = 1) => {
     setItems((prev) => {
@@ -45,6 +65,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, { ...product, quantity }];
     });
+    showToast(`Đã thêm "${product.name}" vào giỏ hàng!`);
   };
 
   const updateQuantity = (id: number, quantity: number) => {
@@ -72,10 +93,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
         items,
         totalQuantity,
         subtotal,
+        toastMessage,
         addToCart,
         updateQuantity,
         removeFromCart,
         clearCart,
+        showToast,
+        hideToast,
       }}
     >
       {children}
