@@ -10,6 +10,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
 import { useCart } from "./context/CartContext";
+import ProductDetail from "./pages/ProductDetail";
 
 export default function App() {
   const { toastMessage, hideToast } = useCart();
@@ -58,6 +59,7 @@ export default function App() {
           }
         >
           <Route path="/" element={<Home />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
         </Route>
