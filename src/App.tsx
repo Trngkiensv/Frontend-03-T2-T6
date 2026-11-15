@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import AdminLayout from "./layouts/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
 import { useCart } from "./context/CartContext";
 
@@ -63,15 +64,7 @@ export default function App() {
 
         {/* Phân hệ Quản trị (Admin Portal) */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route
-            index
-            element={
-              <AdminPlaceholder
-                title="Dashboard Tổng quan"
-                desc="Trung tâm điều khiển, biểu đồ và số liệu báo cáo kinh doanh tổng hợp."
-              />
-            }
-          />
+          <Route index element={<AdminDashboard />} />
           <Route
             path="products"
             element={

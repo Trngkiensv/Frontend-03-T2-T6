@@ -1,0 +1,125 @@
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* KPI Grid */
+.dashboard-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border: 1px solid #ebe8ef;
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 4px 16px -8px rgba(23, 21, 28, 0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -10px rgba(23, 21, 28, 0.12);
+}
+
+.kpi-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.kpi-card__title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6d677a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.kpi-card__icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+}
+
+.kpi-card__icon-wrap--revenue {
+  background: #eaf8ee;
+  color: #1e7e34;
+}
+
+.kpi-card__icon-wrap--orders {
+  background: #edf4fe;
+  color: #1967d2;
+}
+
+.kpi-card__icon-wrap--products {
+  background: #fbf0e4;
+  color: #d97706;
+}
+
+.kpi-card__icon-wrap--pending {
+  background: #fdf2f2;
+  color: #dc2626;
+}
+
+.kpi-card__value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #17151c;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.kpi-card__trend {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: #797384;
+}
+
+.kpi-trend-pill {
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+}
+
+.kpi-trend-pill--up {
+  background: #eaf8ee;
+  color: #1e7e34;
+}
+
+.kpi-trend-pill--down {
+  background: #fdf2f2;
+  color: #dc2626;
+}
+
+.kpi-trend-pill--neutral {
+  background: #f1edf7;
+  color: #6d677a;
+}
+
+/* Responsive */
+@media (max-width: 1199px) {
+  .dashboard-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575px) {
+  .dashboard-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
