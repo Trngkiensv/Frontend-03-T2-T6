@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
 import "./AdminLayout.css";
 
@@ -21,6 +22,12 @@ const ADMIN_NAV_LINKS = [
 
 export default function AdminLayout() {
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Auto-close sidebar on route change on mobile
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   const getPageTitle = () => {
     const currentPath = location.pathname;
@@ -37,13 +44,32 @@ export default function AdminLayout() {
 
   return (
     <div className="admin-layout">
+      {/* Mobile Backdrop Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="admin-backdrop"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="admin-sidebar">
+      <aside className={`admin-sidebar ${isSidebarOpen ? "admin-sidebar--open" : ""}`}>
         <div className="admin-sidebar__brand">
           <Link to="/admin" className="admin-sidebar__brand-link">
             <span>🕶️ BLACKGLASSES</span>
           </Link>
-          <span className="admin-sidebar__badge">ADMIN</span>
+          <div className="d-flex align-items-center gap-2">
+            <span className="admin-sidebar__badge">ADMIN</span>
+            <button
+              type="button"
+              className="admin-sidebar__close d-lg-none"
+              onClick={() => setIsSidebarOpen(false)}
+              aria-label="Đóng thanh điều hướng"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         <nav className="admin-sidebar__nav">
@@ -89,6 +115,14 @@ export default function AdminLayout() {
         {/* Admin Header */}
         <header className="admin-header">
           <div className="admin-header__left">
+            <button
+              type="button"
+              className="admin-header__toggle d-lg-none"
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Mở thanh điều hướng"
+            >
+              ☰
+            </button>
             <h1 className="admin-header__title">{getPageTitle()}</h1>
           </div>
 
@@ -102,14 +136,14 @@ export default function AdminLayout() {
               <span className="d-none d-sm-inline">Xem cửa hàng</span>
             </Link>
 
-            <div className="admin-header__badge-live">
+            <div className="admin-header__badge-live d-none d-md-flex">
               <span className="admin-header__badge-dot" />
               <span>Hệ thống trực tuyến</span>
             </div>
 
             <div className="admin-header__profile">
               <div className="admin-header__avatar">AD</div>
-              <div className="admin-header__profile-info">
+              <div className="admin-header__profile-info d-none d-sm-flex">
                 <span className="admin-header__name">Quản trị viên</span>
                 <span className="admin-header__role">Super Admin</span>
               </div>
