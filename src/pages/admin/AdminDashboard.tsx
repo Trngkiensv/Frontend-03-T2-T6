@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { loadOrders } from "../../utils/orderStorage";
 import { products } from "../../data/products";
@@ -6,34 +6,55 @@ import { formatPrice } from "../../utils/format";
 import type { OrderStatus } from "../../types/order";
 import "./AdminDashboard.css";
 
+type TimeRange = "today" | "week" | "month" | "all";
+
 export default function AdminDashboard() {
+  const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const orders = useMemo(() => loadOrders(), []);
 
-  // Tính toán số liệu thống kê động
+  // Lọc đơn hàng theo khoảng thời gian được chọn
+  const filteredOrders = useMemo(() => {
+    if (timeRange === "all") return orders;
+
+    const now = Date.now();
+    const thresholds = {
+      today: 1000 * 60 * 60 * 24, // 24 giờ
+      week: 1000 * 60 * 60 * 24 * 7, // 7 ngày
+      month: 1000 * 60 * 60 * 24 * 30, // 30 ngày
+    };
+
+    const maxAge = thresholds[timeRange];
+    return orders.filter(
+      (o) => now - new Date(o.createdAt).getTime() <= maxAge
+    );
+  }, [orders, timeRange]);
+
+  // Tính toán số liệu thống kê động dựa trên filteredOrders
   const totalRevenue = useMemo(() => {
-    return orders
+    return filteredOrders
       .filter((o) => o.status !== "cancelled")
       .reduce((sum, o) => sum + o.finalTotal, 0);
-  }, [orders]);
+  }, [filteredOrders]);
 
-  const totalOrdersCount = orders.length;
+  const totalOrdersCount = filteredOrders.length;
 
   const pendingOrdersCount = useMemo(() => {
-    return orders.filter((o) => o.status === "pending").length;
-  }, [orders]);
+    return filteredOrders.filter((o) => o.status === "pending").length;
+  }, [filteredOrders]);
 
   const totalProductsCount = products.length;
 
+  // 5 đơn hàng mới nhất
   const recentOrders = useMemo(() => {
-    return [...orders]
+    return [...filteredOrders]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 5);
-  }, [orders]);
+  }, [filteredOrders]);
 
   // Sản phẩm bán chạy nhất kèm tỷ lệ
   const topSellingProducts = useMemo(() => {
     const counts: Record<number, number> = {};
-    orders.forEach((o) => {
+    filteredOrders.forEach((o) => {
       if (o.status !== "cancelled") {
         o.items.forEach((it) => {
           counts[it.id] = (counts[it.id] || 0) + it.quantity;
@@ -48,11 +69,24 @@ export default function AdminDashboard() {
       }))
       .sort((a, b) => b.sold - a.sold)
       .slice(0, 4);
-  }, [orders]);
+  }, [filteredOrders]);
 
   const maxSold = useMemo(() => {
     return Math.max(...topSellingProducts.map((p) => p.sold), 1);
   }, [topSellingProducts]);
+
+  const getTimeRangeLabel = () => {
+    switch (timeRange) {
+      case "today":
+        return "hôm nay (24h qua)";
+      case "week":
+        return "7 ngày qua";
+      case "month":
+        return "tháng này (30 ngày)";
+      case "all":
+        return "toàn thời gian";
+    }
+  };
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
@@ -74,7 +108,48 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-      {/* 4 Thẻ KPI Tổng quan với số liệu tính toán động */}
+      {/* Thanh bộ lọc thời gian */}
+      <div className="dashboard-filter-bar">
+        <div>
+          <h2 className="dashboard-filter-bar__title">Tổng quan kết quả kinh doanh</h2>
+          <p className="dashboard-filter-bar__subtitle">
+            Dữ liệu thống kê được tính trong: <strong>{getTimeRangeLabel()}</strong>
+          </p>
+        </div>
+
+        <div className="dashboard-filter-group" role="group" aria-label="Lọc khoảng thời gian">
+          <button
+            type="button"
+            className={`dashboard-filter-btn ${timeRange === "all" ? "active" : ""}`}
+            onClick={() => setTimeRange("all")}
+          >
+            Tất cả
+          </button>
+          <button
+            type="button"
+            className={`dashboard-filter-btn ${timeRange === "month" ? "active" : ""}`}
+            onClick={() => setTimeRange("month")}
+          >
+            Tháng này
+          </button>
+          <button
+            type="button"
+            className={`dashboard-filter-btn ${timeRange === "week" ? "active" : ""}`}
+            onClick={() => setTimeRange("week")}
+          >
+            7 ngày qua
+          </button>
+          <button
+            type="button"
+            className={`dashboard-filter-btn ${timeRange === "today" ? "active" : ""}`}
+            onClick={() => setTimeRange("today")}
+          >
+            Hôm nay
+          </button>
+        </div>
+      </div>
+
+      {/* 4 Thẻ KPI Tổng quan */}
       <section className="dashboard-kpi-grid" aria-label="Thống kê chỉ số chính">
         {/* Doanh thu */}
         <div className="kpi-card">
@@ -86,8 +161,8 @@ export default function AdminDashboard() {
           </div>
           <div className="kpi-card__value">{formatPrice(totalRevenue)}</div>
           <div className="kpi-card__trend">
-            <span className="kpi-trend-pill kpi-trend-pill--up">↑ +14.8%</span>
-            <span>tính từ đơn hàng thực tế</span>
+            <span className="kpi-trend-pill kpi-trend-pill--up">↑ Doanh thu</span>
+            <span>trong {getTimeRangeLabel()}</span>
           </div>
         </div>
 
@@ -101,8 +176,8 @@ export default function AdminDashboard() {
           </div>
           <div className="kpi-card__value">{totalOrdersCount} đơn</div>
           <div className="kpi-card__trend">
-            <span className="kpi-trend-pill kpi-trend-pill--up">↑ Tự động đồng bộ</span>
-            <span>từ trang Checkout</span>
+            <span className="kpi-trend-pill kpi-trend-pill--up">↑ Đồng bộ</span>
+            <span>trong {getTimeRangeLabel()}</span>
           </div>
         </div>
 
@@ -186,7 +261,7 @@ export default function AdminDashboard() {
                 {recentOrders.length === 0 && (
                   <tr>
                     <td colSpan={6} className="text-center py-4 text-muted">
-                      Chưa có đơn hàng nào
+                      Không có đơn hàng nào trong {getTimeRangeLabel()}
                     </td>
                   </tr>
                 )}
