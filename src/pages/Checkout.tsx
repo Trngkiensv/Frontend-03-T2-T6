@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
+import { addOrder } from "../utils/orderStorage";
+import type { Order } from "../types/order";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -49,9 +51,27 @@ export default function Checkout() {
     }
 
     const orderId = `BG-${Math.floor(100000 + Math.random() * 900000)}`;
+    const newOrder: Order = {
+      id: orderId,
+      fullName: fullName.trim(),
+      phone: phone.trim(),
+      address: address.trim(),
+      note: note.trim() || undefined,
+      paymentMethod,
+      items: [...items],
+      subtotal,
+      shippingFee,
+      discountAmount,
+      finalTotal,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    };
+    addOrder(newOrder);
+
     setCreatedOrderId(orderId);
     setOrderSuccess(true);
     clearCart();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (orderSuccess) {
