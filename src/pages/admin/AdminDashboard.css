@@ -123,3 +123,110 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Dashboard Section Card */
+.dashboard-card {
+  background: #ffffff;
+  border: 1px solid #ebe8ef;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px -8px rgba(23, 21, 28, 0.06);
+  overflow: hidden;
+}
+
+.dashboard-card__header {
+  padding: 1.15rem 1.4rem;
+  border-bottom: 1px solid #ebe8ef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #17151c;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dashboard-card__link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #c8a24a;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.dashboard-card__link:hover {
+  color: #9d7d32;
+  text-decoration: underline;
+}
+
+.dashboard-table-wrap {
+  overflow-x: auto;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.dashboard-table th {
+  background: #fbfafc;
+  color: #6d677a;
+  font-weight: 600;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #ebe8ef;
+  white-space: nowrap;
+}
+
+.dashboard-table td {
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid #f1edf7;
+  color: #17151c;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.dashboard-table tbody tr:hover {
+  background: #fbfafc;
+}
+
+/* Order Status Badge */
+.order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.order-status-badge--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.order-status-badge--shipping {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.order-status-badge--completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.order-status-badge--cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}

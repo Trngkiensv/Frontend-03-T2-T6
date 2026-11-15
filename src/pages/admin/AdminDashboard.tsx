@@ -1,7 +1,9 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { loadOrders } from "../../utils/orderStorage";
 import { products } from "../../data/products";
 import { formatPrice } from "../../utils/format";
+import type { OrderStatus } from "../../types/order";
 import "./AdminDashboard.css";
 
 export default function AdminDashboard() {
@@ -21,6 +23,30 @@ export default function AdminDashboard() {
   }, [orders]);
 
   const totalProductsCount = products.length;
+
+  const recentOrders = useMemo(() => {
+    return [...orders]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+  }, [orders]);
+
+  const getStatusBadge = (status: OrderStatus) => {
+    switch (status) {
+      case "pending":
+        return <span className="order-status-badge order-status-badge--pending">● Chờ xác nhận</span>;
+      case "shipping":
+        return <span className="order-status-badge order-status-badge--shipping">● Đang giao</span>;
+      case "completed":
+        return <span className="order-status-badge order-status-badge--completed">● Hoàn thành</span>;
+      case "cancelled":
+        return <span className="order-status-badge order-status-badge--cancelled">● Đã hủy</span>;
+    }
+  };
+
+  const formatDate = (isoStr: string) => {
+    const d = new Date(isoStr);
+    return `${d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}, ${d.toLocaleDateString("vi-VN")}`;
+  };
 
   return (
     <div className="admin-dashboard">
@@ -84,6 +110,62 @@ export default function AdminDashboard() {
             <span className="kpi-trend-pill kpi-trend-pill--down">Cần duyệt</span>
             <span>chờ xác nhận đơn</span>
           </div>
+        </div>
+      </section>
+
+      {/* Bảng đơn hàng mới nhất */}
+      <section className="dashboard-card">
+        <div className="dashboard-card__header">
+          <h2 className="dashboard-card__title">
+            <span>📦</span>
+            <span>Đơn hàng mới nhất</span>
+          </h2>
+          <Link to="/admin/orders" className="dashboard-card__link">
+            Xem tất cả đơn hàng →
+          </Link>
+        </div>
+
+        <div className="dashboard-table-wrap">
+          <table className="dashboard-table">
+            <thead>
+              <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>Thời gian</th>
+                <th>Thanh toán</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentOrders.map((order) => (
+                <tr key={order.id}>
+                  <td className="fw-bold">{order.id}</td>
+                  <td>
+                    <div className="fw-semibold">{order.fullName}</div>
+                    <small className="text-muted">{order.phone}</small>
+                  </td>
+                  <td className="text-muted small">{formatDate(order.createdAt)}</td>
+                  <td>
+                    {order.paymentMethod === "cod" ? (
+                      <span className="badge bg-light text-dark border">COD</span>
+                    ) : (
+                      <span className="badge bg-primary-subtle text-primary border">VietQR</span>
+                    )}
+                  </td>
+                  <td className="fw-bold text-danger">{formatPrice(order.finalTotal)}</td>
+                  <td>{getStatusBadge(order.status)}</td>
+                </tr>
+              ))}
+              {recentOrders.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-center py-4 text-muted">
+                    Chưa có đơn hàng nào
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </section>
     </div>
