@@ -1,6 +1,7 @@
 import type { Product } from "../types/product";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
+import { Link } from "react-router-dom";
 
 interface ProductCardProps {
     product: Product;
@@ -17,27 +18,28 @@ export default function ProductCard({ product }: ProductCardProps) {
                 className="card-img-top bg-light p-3"
                 style={{ height: 180, objectFit: "contain" }}
             />
-
             <div className="card-body d-flex flex-column">
                 <div className="d-flex flex-wrap gap-1 mb-2">
                     {product.isFeatured && (
                         <span className="badge text-bg-primary">Nổi bật</span>
                     )}
-
                     {product.isBestSeller && (
                         <span className="badge text-bg-warning">Bán chạy</span>
                     )}
-
                     {product.isNew && (
                         <span className="badge text-bg-success">Mới nhất</span>
                     )}
                 </div>
                 <h2 className="card-title h5">{product.name}</h2>
-
                 <p className="card-text fw-bold text-danger">
                     {formatPrice(product.price)}
                 </p>
-
+                <Link
+                    to={`/products/${product.id}`}
+                    className="btn btn-outline-dark btn-sm mb-2"
+                >
+                    Xem chi tiết
+                </Link>
                 <button
                     id={`add-to-cart-${product.id}`}
                     type="button"
