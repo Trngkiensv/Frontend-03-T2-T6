@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import CategoryNav from "./components/CategoryNav";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
@@ -12,6 +13,7 @@ export default function App() {
 
   return (
     <div className="d-flex flex-column min-vh-100 position-relative">
+      <ScrollToTop />
       {/* Toast thông báo thêm giỏ hàng */}
       {toastMessage && (
         <div

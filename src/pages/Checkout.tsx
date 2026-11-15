@@ -52,6 +52,7 @@ export default function Checkout() {
     setCreatedOrderId(orderId);
     setOrderSuccess(true);
     clearCart();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (orderSuccess) {
