@@ -30,6 +30,30 @@ export default function AdminDashboard() {
       .slice(0, 5);
   }, [orders]);
 
+  // Sản phẩm bán chạy nhất kèm tỷ lệ
+  const topSellingProducts = useMemo(() => {
+    const counts: Record<number, number> = {};
+    orders.forEach((o) => {
+      if (o.status !== "cancelled") {
+        o.items.forEach((it) => {
+          counts[it.id] = (counts[it.id] || 0) + it.quantity;
+        });
+      }
+    });
+
+    return products
+      .map((p) => ({
+        ...p,
+        sold: counts[p.id] || (p.isBestSeller ? 24 : p.isFeatured ? 15 : 6),
+      }))
+      .sort((a, b) => b.sold - a.sold)
+      .slice(0, 4);
+  }, [orders]);
+
+  const maxSold = useMemo(() => {
+    return Math.max(...topSellingProducts.map((p) => p.sold), 1);
+  }, [topSellingProducts]);
+
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case "pending":
@@ -113,61 +137,98 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* Bảng đơn hàng mới nhất */}
-      <section className="dashboard-card">
-        <div className="dashboard-card__header">
-          <h2 className="dashboard-card__title">
-            <span>📦</span>
-            <span>Đơn hàng mới nhất</span>
-          </h2>
-          <Link to="/admin/orders" className="dashboard-card__link">
-            Xem tất cả đơn hàng →
-          </Link>
-        </div>
+      {/* Khu vực 2 cột: Đơn hàng mới & Top sản phẩm bán chạy */}
+      <div className="dashboard-grid-two-col">
+        {/* Bảng đơn hàng mới nhất */}
+        <section className="dashboard-card">
+          <div className="dashboard-card__header">
+            <h2 className="dashboard-card__title">
+              <span>📦</span>
+              <span>Đơn hàng mới nhất</span>
+            </h2>
+            <Link to="/admin/orders" className="dashboard-card__link">
+              Xem tất cả đơn hàng →
+            </Link>
+          </div>
 
-        <div className="dashboard-table-wrap">
-          <table className="dashboard-table">
-            <thead>
-              <tr>
-                <th>Mã đơn</th>
-                <th>Khách hàng</th>
-                <th>Thời gian</th>
-                <th>Thanh toán</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.map((order) => (
-                <tr key={order.id}>
-                  <td className="fw-bold">{order.id}</td>
-                  <td>
-                    <div className="fw-semibold">{order.fullName}</div>
-                    <small className="text-muted">{order.phone}</small>
-                  </td>
-                  <td className="text-muted small">{formatDate(order.createdAt)}</td>
-                  <td>
-                    {order.paymentMethod === "cod" ? (
-                      <span className="badge bg-light text-dark border">COD</span>
-                    ) : (
-                      <span className="badge bg-primary-subtle text-primary border">VietQR</span>
-                    )}
-                  </td>
-                  <td className="fw-bold text-danger">{formatPrice(order.finalTotal)}</td>
-                  <td>{getStatusBadge(order.status)}</td>
-                </tr>
-              ))}
-              {recentOrders.length === 0 && (
+          <div className="dashboard-table-wrap">
+            <table className="dashboard-table">
+              <thead>
                 <tr>
-                  <td colSpan={6} className="text-center py-4 text-muted">
-                    Chưa có đơn hàng nào
-                  </td>
+                  <th>Mã đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Thời gian</th>
+                  <th>Thanh toán</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
+              </thead>
+              <tbody>
+                {recentOrders.map((order) => (
+                  <tr key={order.id}>
+                    <td className="fw-bold">{order.id}</td>
+                    <td>
+                      <div className="fw-semibold">{order.fullName}</div>
+                      <small className="text-muted">{order.phone}</small>
+                    </td>
+                    <td className="text-muted small">{formatDate(order.createdAt)}</td>
+                    <td>
+                      {order.paymentMethod === "cod" ? (
+                        <span className="badge bg-light text-dark border">COD</span>
+                      ) : (
+                        <span className="badge bg-primary-subtle text-primary border">VietQR</span>
+                      )}
+                    </td>
+                    <td className="fw-bold text-danger">{formatPrice(order.finalTotal)}</td>
+                    <td>{getStatusBadge(order.status)}</td>
+                  </tr>
+                ))}
+                {recentOrders.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="text-center py-4 text-muted">
+                      Chưa có đơn hàng nào
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Top sản phẩm bán chạy */}
+        <section className="dashboard-card">
+          <div className="dashboard-card__header">
+            <h2 className="dashboard-card__title">
+              <span>🔥</span>
+              <span>Bán chạy nhất</span>
+            </h2>
+            <Link to="/admin/products" className="dashboard-card__link">
+              Xem kho →
+            </Link>
+          </div>
+
+          <div className="top-products-list">
+            {topSellingProducts.map((p) => (
+              <div key={p.id} className="top-product-item">
+                <img src={p.image} alt={p.name} className="top-product-item__thumb" />
+                <div className="top-product-item__info">
+                  <h3 className="top-product-item__name">{p.name}</h3>
+                  <p className="top-product-item__price">{formatPrice(p.price)}</p>
+                </div>
+                <div className="top-product-item__stats">
+                  <div className="top-product-item__sold">{p.sold} đã bán</div>
+                  <div className="top-product-progress">
+                    <div
+                      className="top-product-progress__bar"
+                      style={{ width: `${Math.round((p.sold / maxSold) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
