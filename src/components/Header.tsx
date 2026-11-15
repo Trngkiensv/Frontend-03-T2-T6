@@ -30,7 +30,17 @@ export default function Header() {
           </div>
 
           <div className="col-12 col-md-5 col-lg-4">
-            <div className="d-flex justify-content-center justify-content-md-end gap-2">
+            <div className="d-flex justify-content-center justify-content-md-end gap-2 align-items-center">
+              <Link
+                id="header-admin"
+                to="/admin"
+                className="btn btn-outline-secondary text-nowrap d-flex align-items-center gap-1"
+                title="Truy cập trang quản trị"
+              >
+                <span>⚙️</span>
+                <span>Quản trị</span>
+              </Link>
+
               <button
                 type="button"
                 className="btn btn-outline-dark text-nowrap"

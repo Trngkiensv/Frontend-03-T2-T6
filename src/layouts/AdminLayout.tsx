@@ -93,6 +93,15 @@ export default function AdminLayout() {
           </div>
 
           <div className="admin-header__right">
+            <Link
+              to="/"
+              className="btn btn-outline-dark btn-sm d-flex align-items-center gap-1 rounded-pill px-3"
+              title="Về trang bán hàng"
+            >
+              <span>🛍️</span>
+              <span className="d-none d-sm-inline">Xem cửa hàng</span>
+            </Link>
+
             <div className="admin-header__badge-live">
               <span className="admin-header__badge-dot" />
               <span>Hệ thống trực tuyến</span>
