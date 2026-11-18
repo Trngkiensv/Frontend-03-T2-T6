@@ -3,14 +3,21 @@ import Header from "./components/Header";
 import CategoryNav from "./components/CategoryNav";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Account from "./pages/Account";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
 import { useCart } from "./context/CartContext";
 import ProductDetail from "./pages/ProductDetail";
+import CustomerManagement from "./pages/admin/CustomerManagement";
+import OrderManagement from "./pages/admin/OrderManagement";
+
 
 export default function App() {
   const { toastMessage, hideToast } = useCart();
@@ -19,7 +26,6 @@ export default function App() {
     <div className="d-flex flex-column min-vh-100 position-relative">
       <ScrollToTop />
 
-      {/* Toast thông báo thêm giỏ hàng */}
       {toastMessage && (
         <div
           className="position-fixed top-0 end-0 p-3"
@@ -43,7 +49,6 @@ export default function App() {
       )}
 
       <Routes>
-        {/* Phân hệ Khách hàng (Storefront) */}
         <Route
           element={
             <div className="d-flex flex-column min-vh-100">
@@ -51,9 +56,11 @@ export default function App() {
                 <Header />
                 <CategoryNav />
               </div>
+
               <div className="flex-grow-1">
                 <Outlet />
               </div>
+
               <Footer />
             </div>
           }
@@ -62,11 +69,29 @@ export default function App() {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <Account />
+              </ProtectedRoute>
+            }
+          />
         </Route>
 
-        {/* Phân hệ Quản trị (Admin Portal) */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<AdminDashboard />} />
+
           <Route
             path="products"
             element={
@@ -76,15 +101,12 @@ export default function App() {
               />
             }
           />
+
           <Route
-            path="orders"
-            element={
-              <AdminPlaceholder
-                title="Quản lý Đơn hàng"
-                desc="Tiếp nhận đơn đặt hàng từ khách, chuyển trạng thái và xem chi tiết sản phẩm đã mua."
-              />
-            }
-          />
+  path="orders"
+  element={<OrderManagement />}
+/>
+
           <Route
             path="coupons"
             element={
@@ -94,6 +116,7 @@ export default function App() {
               />
             }
           />
+
           <Route
             path="banners"
             element={
@@ -103,6 +126,7 @@ export default function App() {
               />
             }
           />
+
           <Route
             path="categories"
             element={
@@ -112,15 +136,12 @@ export default function App() {
               />
             }
           />
+
           <Route
-            path="customers"
-            element={
-              <AdminPlaceholder
-                title="Quản lý Khách hàng"
-                desc="Danh sách thông tin người mua hàng, lịch sử đặt đơn và xếp hạng khách hàng."
-              />
-            }
-          />
+  path="customers"
+  element={<CustomerManagement />}
+/>
+
           <Route
             path="settings"
             element={
