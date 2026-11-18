@@ -1,15 +1,20 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   const { totalQuantity } = useCart();
+  const { user } = useAuth();
 
   return (
     <header className="bg-white border-bottom">
       <div className="container py-3">
         <div className="row align-items-center g-3">
           <div className="col-12 col-lg-3 text-center text-lg-start">
-            <Link to="/" className="fs-4 fw-bold text-dark text-decoration-none">
+            <Link
+              to="/"
+              className="fs-4 fw-bold text-dark text-decoration-none"
+            >
               BLACKGLASSES
             </Link>
           </div>
@@ -31,22 +36,24 @@ export default function Header() {
 
           <div className="col-12 col-md-5 col-lg-4">
             <div className="d-flex justify-content-center justify-content-md-end gap-2 align-items-center">
-              <Link
-                id="header-admin"
-                to="/admin"
-                className="btn btn-outline-secondary text-nowrap d-flex align-items-center gap-1"
-                title="Truy cập trang quản trị"
-              >
-                <span>⚙️</span>
-                <span>Quản trị</span>
-              </Link>
+              {user?.role === "Admin" && (
+                <Link
+                  id="header-admin"
+                  to="/admin"
+                  className="btn btn-outline-secondary text-nowrap d-flex align-items-center gap-1"
+                  title="Truy cập trang quản trị"
+                >
+                  <span>⚙️</span>
+                  <span>Quản trị</span>
+                </Link>
+              )}
 
-              <button
-                type="button"
+              <Link
+                to={user ? "/account" : "/login"}
                 className="btn btn-outline-dark text-nowrap"
               >
-                Tài khoản
-              </button>
+                {user ? user.fullName : "Tài khoản"}
+              </Link>
 
               <Link
                 id="header-cart"

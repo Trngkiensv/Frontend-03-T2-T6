@@ -1,5 +1,6 @@
-import type { Order } from "../types/order";
+import type { Order, OrderStatus } from "../types/order";
 import { initialOrders } from "../data/initialOrders";
+
 
 const ORDERS_KEY = "blackglasses-orders";
 
@@ -28,4 +29,28 @@ export function addOrder(newOrder: Order): void {
   const current = loadOrders();
   const updated = [newOrder, ...current];
   saveOrders(updated);
+}
+
+export function updateOrderStatus(
+  orderId: string,
+  status: OrderStatus
+): Order {
+  const orders = loadOrders();
+  const orderIndex = orders.findIndex(
+    (order) => order.id === orderId
+  );
+
+  if (orderIndex === -1) {
+    throw new Error("Không tìm thấy đơn hàng");
+  }
+
+  const updatedOrder: Order = {
+    ...orders[orderIndex],
+    status,
+  };
+
+  orders[orderIndex] = updatedOrder;
+  saveOrders(orders);
+
+  return updatedOrder;
 }
