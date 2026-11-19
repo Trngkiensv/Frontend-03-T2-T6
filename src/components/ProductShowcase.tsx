@@ -1,9 +1,13 @@
 import { useState } from "react";
 import ProductCard from "./ProductCard";
-import { products } from "../data/products";
 import "./ProductShowcase.css";
+import type { Product } from "../types/product";
 
-export default function ProductShowcase() {
+interface ProductShowcaseProps {
+    products: Product[];
+}
+
+export default function ProductShowcase({ products }: ProductShowcaseProps) {
     const [activeGroup, setActiveGroup] = useState("isFeatured");
 
     const filteredProducts = products.filter((product) => {

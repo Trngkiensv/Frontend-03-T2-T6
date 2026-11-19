@@ -1,9 +1,41 @@
 import ProductCard from "../components/ProductCard";
-import { products } from "../data/products";
 import { banners } from "../data/banners";
 import ProductShowcase from "../components/ProductShowcase";
+import { useEffect, useState } from "react";
+import type { Product } from "../types/product";
+import { getProducts } from "../services/productService";
 
 export default function Home() {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    useEffect(() => {
+        getProducts()
+            .then((data) => {
+                setProducts(data);
+            })
+            .catch((error) => {
+                console.error(error);
+                setError("Ẻrror .");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+    if (loading) {
+        return (
+            <main className="container py-4" role="status">
+                Đang tải sản phẩm...
+            </main>
+        );
+    }
+    if (error) {
+        return (
+            <main className="container py-4 text-danger" role="alert">
+                {error}
+            </main>
+        );
+    }
     return (
         <main className="container py-4 text-start">
             <section
@@ -53,7 +85,7 @@ export default function Home() {
                     />
                 </button>
             </section>
-            <ProductShowcase />
+            <ProductShowcase products={products} />
             <h1 id="all-products" className="h3 mb-4">
                 Danh sách kính mát
             </h1>
