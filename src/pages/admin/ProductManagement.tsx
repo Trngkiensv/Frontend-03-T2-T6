@@ -34,6 +34,9 @@ export default function ProductManagement() {
   const [form, setForm] = useState<ProductForm>(emptyForm);
   // Xóa sản phẩm
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  // Phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 5;
 
   const filtered = productList.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(searchValue.toLowerCase());
@@ -44,6 +47,9 @@ export default function ProductManagement() {
       (filter === "new" && p.isNew);
     return matchSearch && matchFilter;
   });
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   function openAddModal() {
     setEditingProduct(null);
@@ -162,9 +168,9 @@ export default function ProductManagement() {
                     </td>
                   </tr>
                 )}
-                {filtered.map((product, index) => (
+                {paginated.map((product, index) => (
                   <tr key={product.id}>
-                    <td className="text-muted">{index + 1}</td>
+                    <td className="text-muted">{(currentPage - 1) * PAGE_SIZE + index + 1}</td>
                     <td>
                       <img
                         src={product.image}
@@ -216,6 +222,30 @@ export default function ProductManagement() {
           </div>
         </div>
       </div>
+
+      {/* Phân trang */}
+      {totalPages > 1 && (
+        <div className="d-flex justify-content-between align-items-center mt-3">
+          <small className="text-muted">
+            Hiển thị {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filtered.length)} / {filtered.length} sản phẩm
+          </small>
+          <nav>
+            <ul className="pagination pagination-sm mb-0">
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button className="page-link" onClick={() => setCurrentPage((p) => p - 1)}>‹</button>
+              </li>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <li key={page} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(page)}>{page}</button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <button className="page-link" onClick={() => setCurrentPage((p) => p + 1)}>›</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      )}
 
       {/* Modal Thêm / Chỉnh sửa */}
       {showModal && (
