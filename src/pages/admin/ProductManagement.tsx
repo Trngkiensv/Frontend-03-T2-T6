@@ -32,6 +32,8 @@ export default function ProductManagement() {
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [form, setForm] = useState<ProductForm>(emptyForm);
+  // Xóa sản phẩm
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const filtered = productList.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(searchValue.toLowerCase());
@@ -60,6 +62,11 @@ export default function ProductManagement() {
       isNew: product.isNew,
     });
     setShowModal(true);
+  }
+
+  function handleDelete(id: number) {
+    setProductList((prev) => prev.filter((p) => p.id !== id));
+    setDeleteId(null);
   }
 
   function handleSave() {
@@ -195,7 +202,10 @@ export default function ProductManagement() {
                       >
                         Sửa
                       </button>
-                      <button className="btn btn-sm btn-outline-danger" disabled>
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => setDeleteId(product.id)}
+                      >
                         Xóa
                       </button>
                     </td>
@@ -289,6 +299,29 @@ export default function ProductManagement() {
                 <button className="btn btn-dark" onClick={handleSave}>
                   {editingProduct ? "Lưu thay đổi" : "Thêm sản phẩm"}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal xác nhận xóa */}
+      {deleteId !== null && (
+        <div
+          className="modal show d-block"
+          style={{ background: "rgba(0,0,0,0.4)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered modal-sm">
+            <div className="modal-content">
+              <div className="modal-header border-0 pb-0">
+                <h6 className="modal-title fw-bold text-danger">Xác nhận xóa</h6>
+              </div>
+              <div className="modal-body pt-1">
+                <p className="mb-0">Bạn chắc chắn muốn xóa sản phẩm này? Hành động này không thể hoàn tác.</p>
+              </div>
+              <div className="modal-footer border-0 pt-0">
+                <button className="btn btn-secondary btn-sm" onClick={() => setDeleteId(null)}>Hủy</button>
+                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(deleteId)}>Xóa</button>
               </div>
             </div>
           </div>
