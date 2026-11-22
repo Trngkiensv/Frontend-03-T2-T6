@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder";
+import ProductManagement from "./pages/admin/ProductManagement";
 import { useCart } from "./context/CartContext";
 import ProductDetail from "./pages/ProductDetail";
 import CustomerManagement from "./pages/admin/CustomerManagement";
@@ -94,12 +95,7 @@ export default function App() {
 
           <Route
             path="products"
-            element={
-              <AdminPlaceholder
-                title="Quản lý Sản phẩm"
-                desc="Danh sách kính mắt, lọc, tìm kiếm, thêm mới, sửa đổi và xóa sản phẩm."
-              />
-            }
+            element={<ProductManagement />}
           />
 
           <Route
