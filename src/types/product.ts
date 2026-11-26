@@ -7,3 +7,4 @@ export interface Product {
   isBestSeller: boolean;
   isNew: boolean;
 }
+export type ProductResponse = Product[] | { products: Product[] };
