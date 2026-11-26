@@ -1,27 +1,19 @@
 import ProductCard from "../components/ProductCard";
 import { banners } from "../data/banners";
 import ProductShowcase from "../components/ProductShowcase";
-import { useEffect, useState } from "react";
-import type { Product } from "../types/product";
-import { getProducts } from "../services/productService";
+import useAPI from "../hooks/useAPI";
+import type { ProductResponse } from "../types/product";
 
 export default function Home() {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    useEffect(() => {
-        getProducts()
-            .then((data) => {
-                setProducts(data);
-            })
-            .catch((error) => {
-                console.error(error);
-                setError("Ẻrror .");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, []);
+    const { data, error, loading } = useAPI<ProductResponse>(
+        "https://api.mockfly.dev/mocks/bb5dda88-6781-4978-a985-b68f6a0c945f/products",
+    );
+    let products;
+    if (Array.isArray(data)) {
+        products = data;
+    } else {
+        products = data?.products || [];
+    }
     if (loading) {
         return (
             <main className="container py-4" role="status">
@@ -42,7 +34,6 @@ export default function Home() {
                 id="homeBanner"
                 className="carousel slide mb-4"
                 data-bs-interval="false"
-                aria-label="Banner quảng cáo"
             >
                 <div className="carousel-inner rounded">
                     {banners.map((banner, index) => (
@@ -60,7 +51,6 @@ export default function Home() {
                         </div>
                     ))}
                 </div>
-
                 <button
                     className="carousel-control-prev"
                     type="button"
@@ -72,7 +62,6 @@ export default function Home() {
                         aria-hidden="true"
                     />
                 </button>
-
                 <button
                     className="carousel-control-next"
                     type="button"

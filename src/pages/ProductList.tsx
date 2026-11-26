@@ -1,42 +1,21 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import useAPI from "../hooks/useAPI";
 import ProductCard from "../components/ProductCard";
-import { getProducts } from "../services/productService";
-import type { Product } from "../types/product";
+import type { ProductResponse } from "../types/product";
+
 export default function ProductList() {
-    const [searchParams] = useSearchParams();
-    const q = (searchParams.get("q") || "").trim();
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    useEffect(() => {
-        let isActive = true;
-        setLoading(true);
-        setError("");
-        getProducts("Black")
-            .then((data) => {
-                if (isActive) {
-                    setProducts(data);
-                }
-            })
-            .catch(() => {
-                if (isActive) {
-                    setError("Err");
-                }
-            })
-            .finally(() => {
-                if (isActive) {
-                    setLoading(false);
-                }
-            });
-        return () => {
-            isActive = false;
-        };
-    }, [q]);
+    const { data, error, loading } = useAPI<ProductResponse>(
+        "https://api.mockfly.dev/mocks/bb5dda88-6781-4978-a985-b68f6a0c945f/products?q=Black",
+    );
+    let products;
+    if (Array.isArray(data)) {
+        products = data;
+    } else {
+        products = data?.products || [];
+    }
     if (loading) {
         return (
             <main className="container py-4" role="status">
-                Đang tìm ...
+                Đang tải sản phẩm...
             </main>
         );
     }
@@ -49,9 +28,8 @@ export default function ProductList() {
     }
     return (
         <main className="container py-4">
-            <h1 className="h3 text-body mb-4"></h1>
+            <h1 className="h3 text-body mb-4">Kết quả tìm kiếm</h1>
             {products.length === 0 && <p>Không tìm thấy sản phẩm.</p>}
-
             <div className="row g-4">
                 {products.map((product) => (
                     <div className="col-12 col-sm-6 col-lg-3" key={product.id}>
