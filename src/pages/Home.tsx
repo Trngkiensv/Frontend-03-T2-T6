@@ -1,5 +1,5 @@
 import ProductCard from "../components/ProductCard";
-import { banners } from "../data/banners";
+import type { BannerResponse } from "../types/banner";
 import ProductShowcase from "../components/ProductShowcase";
 import useAPI from "../hooks/useAPI";
 import type { ProductResponse } from "../types/product";
@@ -13,6 +13,19 @@ export default function Home() {
         products = data;
     } else {
         products = data?.products || [];
+    }
+    const {
+        data: bannerData,
+        error: bannerError,
+        loading: bannerLoading,
+    } = useAPI<BannerResponse>(
+        "https://api.mockfly.dev/mocks/bb5dda88-6781-4978-a985-b68f6a0c945f/banner",
+    );
+    let banners;
+    if (Array.isArray(bannerData)) {
+        banners = bannerData;
+    } else {
+        banners = bannerData?.banners || [];
     }
     if (loading) {
         return (
